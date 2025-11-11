@@ -35,6 +35,8 @@ public class SecurityConfiguration {
                 .authorizeHttpRequests(auth -> auth
                         // Permite todos os endpoints de auth sem autenticação
                         .requestMatchers("/auth/**").permitAll()
+                        // Endpoints de cache - apenas ADMIN
+                        .requestMatchers("/cache/**").hasRole("ADMIN")
                         // Operações de escrita (POST, PUT, DELETE) precisam de ADMIN
                         .requestMatchers(HttpMethod.POST, "/tarefas", "/tarefas/**", "/categorias", "/categorias/**", "/usuarios", "/usuarios/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.PUT, "/tarefas/**", "/categorias/**", "/usuarios", "/usuarios/**").hasRole("ADMIN")
