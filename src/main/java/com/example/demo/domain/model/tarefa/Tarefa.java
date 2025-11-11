@@ -33,11 +33,11 @@ public class Tarefa {
     private int points = 10;
 
     @ManyToOne
-    @JoinColumn(name = "category_id")
+    @JoinColumn(name = "categoria_id")
     private CategoriaSustentabilidade categoria;
 
     @ManyToOne
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "usuario_id")
     private Usuario usuario;
 
 }

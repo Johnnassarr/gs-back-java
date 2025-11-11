@@ -6,5 +6,5 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-public record RegisterDTO( String email, String password, UserRole role) {
+public record RegisterDTO(String username, String email, String password, UserRole role) {
 }

@@ -33,10 +33,16 @@ public class SecurityConfiguration {
                 .cors(cors -> cors.configurationSource(corsConfigurationSource())) // Habilita CORS
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/auth/**").permitAll() // Permite todos os endpoints de auth
-                        .requestMatchers(HttpMethod.POST, "/produtos/**").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.GET, "/produtos/**").authenticated()
-                        .anyRequest().authenticated()) //apenas autenticado nao precisa ser ADMIN
+                        // Permite todos os endpoints de auth sem autenticação
+                        .requestMatchers("/auth/**").permitAll()
+                        // Operações de escrita (POST, PUT, DELETE) precisam de ADMIN
+                        .requestMatchers(HttpMethod.POST, "/tarefas", "/tarefas/**", "/categorias", "/categorias/**", "/usuarios", "/usuarios/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/tarefas/**", "/categorias/**", "/usuarios", "/usuarios/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/tarefas/**", "/categorias/**", "/usuarios", "/usuarios/**").hasRole("ADMIN")
+                        // Operações de leitura (GET) precisam apenas de autenticação
+                        .requestMatchers(HttpMethod.GET, "/tarefas", "/tarefas/**", "/categorias", "/categorias/**", "/usuarios", "/usuarios/**").authenticated()
+                        // Qualquer outra requisição precisa de autenticação
+                        .anyRequest().authenticated())
                 .httpBasic(httpBasic -> httpBasic.disable()) // Desabilita HTTP Basic
                 .formLogin(formLogin -> formLogin.disable()) // Desabilita form login
                 .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)
