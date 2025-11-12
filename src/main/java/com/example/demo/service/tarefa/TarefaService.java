@@ -2,6 +2,7 @@ package com.example.demo.service.tarefa;
 
 import com.example.demo.domain.model.dto.PageResponse;
 import com.example.demo.domain.model.dto.tarefa.TarefaDTO;
+import com.example.demo.domain.model.dto.tarefa.TarefaCriadaEvent;
 import com.example.demo.domain.model.tarefa.CategoriaSustentabilidade;
 import com.example.demo.domain.model.tarefa.Tarefa;
 import com.example.demo.domain.model.usuario.Usuario;
@@ -17,6 +18,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.time.OffsetDateTime;
 import java.util.List;
 
 @Service
@@ -30,6 +32,9 @@ public class TarefaService {
 
     @Autowired
     CategoriaSustentabilidadeRepository categoriaSustentabilidadeRepository;
+
+    @Autowired
+    TaskEventPublisher taskEventPublisher;
 
     /**
      * Lista todas as tarefas com cache (método sem paginação - mantido para compatibilidade)
@@ -113,7 +118,18 @@ public class TarefaService {
                 .orElseThrow(() -> new RuntimeException("Usuário não encontrado com ID: " + dto.usuarioId()));
         tarefa.setUsuario(usuario);
 
-        return tarefaRepository.save(tarefa);
+        Tarefa tarefaSalva = tarefaRepository.save(tarefa);
+
+        TarefaCriadaEvent event = new TarefaCriadaEvent(
+                tarefaSalva.getId(),
+                tarefaSalva.getTitulo(),
+                tarefaSalva.getUsuario().getId(),
+                tarefaSalva.getCategoria().getId(),
+                OffsetDateTime.now()
+        );
+        taskEventPublisher.publishTaskCreated(event);
+
+        return tarefaSalva;
     }
 
     /**

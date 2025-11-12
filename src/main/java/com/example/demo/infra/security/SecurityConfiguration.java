@@ -35,8 +35,6 @@ public class SecurityConfiguration {
                 .authorizeHttpRequests(auth -> auth
                         // Permite todos os endpoints de auth sem autenticação
                         .requestMatchers("/auth/**").permitAll()
-                        // Endpoint de chat IA disponível para o app mobile
-                        .requestMatchers(HttpMethod.POST, "/api/chat").permitAll()
                         // Endpoints de cache - apenas ADMIN
                         .requestMatchers("/cache/**").hasRole("ADMIN")
                         // Operações de escrita (POST, PUT, DELETE) precisam de ADMIN
